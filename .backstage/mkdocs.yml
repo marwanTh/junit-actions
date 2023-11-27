@@ -1,0 +1,17 @@
+# site_name: "delivery-manager-docs"
+
+# nav:
+#   - Home: index.md
+# theme:
+#   name: material
+# plugins:
+#   - techdocs-core
+
+site_name: My Docs
+nav:
+  - Home: index.md
+  - Getting Started: getting_started.md
+theme:
+  name: readthedocs
+plugins:
+  - techdocs-core

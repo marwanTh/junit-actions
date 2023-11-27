@@ -1,0 +1,12 @@
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: delivery-manager-api
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: guests
+  system: authoring
+  definition:
+    $openapi: https://github.com/PixelogicMedia/delivery-manager/blob/main/src/main/resources/static/api.yaml

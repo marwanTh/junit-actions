@@ -1,0 +1,633 @@
+openapi: 3.0.3
+
+info:
+  title: pHelix Delivery Manager
+  version: v0.1
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+paths:
+
+  /delivery-jobs:
+    get:
+      tags:
+        - Jobs
+      description: List delivery jobs
+      operationId: listJobs
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/filterParam'
+        - $ref: '#/components/parameters/sortParam'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeliveryJob'
+
+    post:
+      tags:
+        - Jobs
+      description: Create a new Transfer Job
+      operationId: createJob
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryJob'
+      parameters:
+        - in: query
+          name: allowDuplication
+          schema:
+            type: boolean
+            default: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryJob'
+
+  /delivery-jobs/{id}:
+    get:
+      tags:
+        - Jobs
+      description: Get single job
+      operationId: getJob
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryJob'
+
+  /connections:
+    get:
+      tags:
+        - Connections
+      description: List connections
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/filterParam'
+        - $ref: '#/components/parameters/sortParam'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Connection'
+
+    post:
+      tags:
+        - Connection
+      description: Create a new connection
+      operationId: createConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Connection'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connection'
+
+  /connections/{id}:
+    put:
+      tags:
+        - Connection
+      description: Update connection
+      operationId: updateConnection
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Connection'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connection'
+
+  /profiles:
+    get:
+      tags:
+        - Profiles
+      description: List profiles
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/filterParam'
+        - $ref: '#/components/parameters/sortParam'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profile'
+
+    post:
+      tags:
+        - Profiles
+      description: Create a new profile
+      operationId: createProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+
+  /profiles/{id}:
+    put:
+      tags:
+        - Profiles
+      description: Update profile
+      operationId: updateProfile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+
+  /contacts:
+    get:
+      tags:
+        - Contacts
+      description: List contacts
+      operationId: listContacts
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/filterParam'
+        - $ref: '#/components/parameters/sortParam'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+
+    post:
+      tags:
+        - Contacts
+      description: Create a new contact
+      operationId: createContact
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+
+  /contacts/{id}:
+    put:
+      tags:
+        - Contacts
+      description: Update contact
+      operationId: updateContact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+
+  /storages:
+    get:
+      tags:
+        - Storages
+      description: List storages
+      operationId: listStorages
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/filterParam'
+        - $ref: '#/components/parameters/sortParam'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Storage'
+
+    post:
+      tags:
+        - Storages
+      description: Create a new storage
+      operationId: createStorage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Storage'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Storage'
+
+  /storages/{id}:
+    put:
+      tags:
+        - Storages
+      description: Update storage
+      operationId: updateStorage
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Storage'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Storage'
+
+components:
+
+  parameters:
+    offsetParam:
+      in: query
+      name: offset
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+      description: The number of items to skip before starting to collect the result set.
+    limitParam:
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: The numbers of items to return.
+    filterParam:
+      in: query
+      name: filter
+      required: false
+      schema:
+        type: string
+      description: RSQL Filter
+    sortParam:
+      in: query
+      name: sort
+      required: false
+      schema:
+        type: string
+        default: 'id,desc'
+      description: RSQL Sort
+
+  schemas:
+    Error:
+      type: object
+      description: General Error
+      properties:
+        message:
+          type: string
+          description: Error message
+        constraintViolations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConstraintViolation'
+        errorMessages:
+          type: array
+          description: Simple error message
+          items:
+            type: string
+      required:
+        - message
+
+    ConstraintViolation:
+      type: object
+      description: Constraint violation
+      properties:
+        message:
+          type: string
+          description: Error message
+        property:
+          type: string
+          description: Property path
+
+    Asset:
+      type: object
+      description: Transfer Asset
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          description: ID.
+        path:
+          type: string
+          description: Path of the asset
+        phelixAssetId:
+          type: integer
+          format: int64
+          description: The pHelix ID of the asset.
+        phelixAssetVersion:
+          type: integer
+          format: int64
+          description: The pHelix Version ID of the asset.
+
+    DeliveryJob:
+      type: object
+      description: Transfer Job
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          description: ID.
+        profile:
+          $ref: '#/components/schemas/Profile'
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
+        titleId:
+          type: string
+          description: pHelix Title ID
+        alphaId:
+          type: integer
+          format: int64
+          description: pHelix Alpha ID
+        status:
+          type: string
+          enum:
+            - CREATED
+            - FAILED
+            - CANCELED
+            - IN_PROGRESS
+            - COMPLETED
+        progress:
+          type: number
+          format: double
+        initiator:
+          type: string
+          enum:
+            - OM
+        externalId:
+          type: string
+        emailSubject:
+          type: string
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeliveryJobContact'
+      required:
+        - assets
+        - profile
+
+    Connection:
+      type: object
+      description: Connection
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          description: ID.
+        name:
+          type: string
+          description: Connection name
+        description:
+          type: string
+          description: Connection description
+        type:
+          type: string
+          description: Connection type (e.g. Aspera...)
+        config:
+          type: object
+          description: Connection configurations in JSON format
+      required:
+        - name
+        - type
+        - config
+
+    Contact:
+      type: object
+      description: Contact
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          description: ID.
+        firstName:
+          type: string
+          description: Contact first name
+        lastName:
+          type: string
+          description: Contact last name
+        email:
+          type: string
+          format: email
+          description: Contact first name
+      required:
+        - email
+
+    ProfileContact:
+      type: object
+      description: ProfileContact
+      properties:
+        contact:
+          $ref: '#/components/schemas/Contact'
+#        profile:
+#          $ref: '#/components/schemas/Profile'
+        notifyOn:
+          type: string
+          enum:
+            - SUCCESS
+            - FAILURE
+          description: notify on (SUCCESS or FAILURE)
+        sendType:
+          type: string
+          enum:
+            - TO
+            - CC
+            - BCC
+          description: TO,CC or BCC
+      required:
+        - notifyOn
+        - sendType
+
+    DeliveryJobContact:
+      type: object
+      description: DeliveryJobContact
+      properties:
+        contact:
+          $ref: '#/components/schemas/Contact'
+#        deliveryJob:
+#          $ref: '#/components/schemas/DeliveryJob'
+        notifyOn:
+          type: string
+          enum:
+            - SUCCESS
+            - FAILURE
+          description: notify on (SUCCESS or FAILURE)
+        sendType:
+          type: string
+          enum:
+            - TO
+            - CC
+            - BCC
+          description: TO,CC or BCC
+      required:
+        - notifyOn
+        - sendType
+
+    Profile:
+      type: object
+      description: Connection Profile
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          description: ID.
+        name:
+          type: string
+          description: Connection name
+        description:
+          type: string
+          description: Connection description
+        connection:
+          $ref: '#/components/schemas/Connection'
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileContact'
+        rootPath:
+          type: string
+          description: Root path in the destination
+          default: "/"
+        emailSubjectTemplate:
+          type: string
+          description: template that will be resolved upon job creation
+        completionTemplateKey:
+          type: string
+        failureTemplateKey:
+          type: string
+      required:
+        - name
+        - connection
+
+    Storage:
+      type: object
+      description: Storage Mapping
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          description: ID.
+        name:
+          type: string
+          description: Storage name
+        storageId:
+          type: string
+          description: Storage AM ID
+        location:
+          type: string
+          description: Storage location
+        attributes:
+          $ref: '#/components/schemas/StorageAttributes'
+      required:
+        - storageId
+
+    StorageAttributes:
+      type: object
+      additionalProperties: true

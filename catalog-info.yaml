@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "delivery-manager"
+spec:
+  type: service
+  owner: user:guest
+  lifecycle: experimental
+  system: pHelix
+  providesApis: [delivery-manager-api]

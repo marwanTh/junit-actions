@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+set -e
+
+if [ -z "$1" ]
+  then
+    echo "Usage: generate_flyway_migration create_users_table"
+    exit 1
+fi
+
+FILE="./src/main/resources/db/migration/V$(date +%Y%m%d%H%M%S)__$1.sql"
+
+touch "$FILE"
+echo "Created $FILE"
