@@ -32,5 +32,5 @@ jobs:
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Test with Maven and JUnit5
-      run: mvn test -Dtest=com.pixelogicmedia.delivery.RegressionSuite.java 
+      run: mvn test -Dtest=com.pixelogicmedia.delivery.RegressionSuite.java surefire:test
 
