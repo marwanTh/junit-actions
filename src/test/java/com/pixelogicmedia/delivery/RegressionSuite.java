@@ -4,6 +4,8 @@ import com.pixelogicmedia.delivery.api.v1.ContactsControllerTests;
 import com.pixelogicmedia.delivery.api.v1.ProfileControllerTests;
 import com.pixelogicmedia.delivery.api.v1.StoragesControllerTests;
 import org.junit.platform.suite.api.*;
+import org.springframework.boot.test.context.SpringBootTest;
+
 
 @Suite
 @SelectClasses({
@@ -35,6 +37,10 @@ import org.junit.platform.suite.api.*;
  */
 @ConfigurationParameter(key = "junit.jupiter.extensions.autodetection.enabled", value = "true")
 
+@SpringBootTest(classes = { ConnectionsControllerTests.class,
+        ContactsControllerTests.class,
+        StoragesControllerTests.class,
+        ProfileControllerTests.class})
 
 public class RegressionSuite {
 }
