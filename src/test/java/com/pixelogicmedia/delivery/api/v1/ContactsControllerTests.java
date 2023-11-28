@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ContactsControllerTests extends AbstractControllerTest {
 
     @Test
-    void createContacts() {
+    public void createContacts() {
         final var contactRequest = new ContactResource()
                 .email("%s@pixelogicmedia.com".formatted(UUID.randomUUID()))
                 .firstName("testFirstName")
@@ -30,7 +30,7 @@ public class ContactsControllerTests extends AbstractControllerTest {
     }
 
     @Test
-    void createContactsDuplicateEmail() {
+    public void createContactsDuplicateEmail() {
         final var contactRequest = new ContactResource()
                 .email("%s@pixelogicmedia.com".formatted(UUID.randomUUID()))
                 .firstName("testFirstName")
@@ -43,7 +43,7 @@ public class ContactsControllerTests extends AbstractControllerTest {
     }
 
     @Test
-    void createContactsReqEmail() {
+    public void createContactsReqEmail() {
         final var contactRequest = new ContactResource()
                 .firstName("testFirstName")
                 .lastName("testLastName");
@@ -54,7 +54,7 @@ public class ContactsControllerTests extends AbstractControllerTest {
     }
 
     @Test
-    void createContactsReqFirstName() {
+    public void createContactsReqFirstName() {
         final var contactRequest = new ContactResource()
                 .email("%s@pixelogicmedia.com".formatted(UUID.randomUUID()))
                 .lastName("testLastName");
@@ -65,7 +65,7 @@ public class ContactsControllerTests extends AbstractControllerTest {
     }
 
     @Test
-    void createContactsReqLastName() {
+    public void createContactsReqLastName() {
         final var contactRequest = new ContactResource()
                 .email("%s@pixelogicmedia.com".formatted(UUID.randomUUID()))
                 .firstName("testFirstName");
@@ -76,7 +76,7 @@ public class ContactsControllerTests extends AbstractControllerTest {
     }
 
     @Test
-    void updateContacts() {
+    public void updateContacts() {
         final var contactCreateRequest = new ContactResource()
                 .email("%s@pixelogicmedia.com".formatted(UUID.randomUUID()))
                 .firstName("testFirstName")
@@ -98,7 +98,7 @@ public class ContactsControllerTests extends AbstractControllerTest {
     }
 
     @Test
-    void getContacts() {
+    public void getContacts() {
         final var initialContacts = this.get("contacts", new ParameterizedTypeReference<List<ContactResource>>() {
         });
         final var contactCreateRequest = new ContactResource()
