@@ -33,7 +33,8 @@ public class ContactService {
     }
 
     @Transactional
-    public Contact updateContact(final Contact contact) {
+    public Contact updateContact(final Long id, final Contact contact) {
+        contact.setId(id);
         if (Objects.isNull(contact.getId())) {
             throw BusinessException.badRequest("ID is required when updating objects");
         }

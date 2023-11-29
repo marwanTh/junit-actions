@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JacksonException;
 import com.pixelogicmedia.delivery.api.v1.models.ConstraintViolationResource;
 import com.pixelogicmedia.delivery.api.v1.models.ErrorResource;
 import com.pixelogicmedia.delivery.exceptions.BusinessException;
+import com.pixelogicmedia.delivery.exceptions.EnumMappingException;
 import cz.jirutka.rsql.parser.RSQLParserException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -70,6 +72,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.internalServerError().body(new ErrorResource().message(e.getCause().getMessage()));
     }
 
+    @ExceptionHandler(EnumMappingException.class)
+    protected ResponseEntity<ErrorResource> handleEnumMappingException(final EnumMappingException e) {
+        return ResponseEntity.badRequest().body(new ErrorResource().message(e.getMessage()));
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatusCode status, final WebRequest request) {
         var error = new ErrorResource().message(ex.getMessage());
@@ -82,6 +89,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .toList());
 
         return ResponseEntity.badRequest().body(error);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex, final HttpHeaders headers, final HttpStatusCode status, final WebRequest request) {
+        return ResponseEntity.badRequest().body(new ErrorResource().message(ex.getMessage()));
     }
 
     private String argumentNames(Object[] arguments) {

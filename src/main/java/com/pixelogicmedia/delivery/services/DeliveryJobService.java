@@ -12,16 +12,15 @@ import com.pixelogicmedia.delivery.exceptions.BusinessException;
 import com.pixelogicmedia.delivery.execution.PathResolverService;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +35,7 @@ public class DeliveryJobService {
     private final ProfileContactRepository profileContactRepository;
 
     private final ProfileRepository profileRepository;
+
     @Autowired
     public DeliveryJobService(final DeliveryJobRepository deliveryJobRepository, final PathResolverService pathResolverService, final AssetRepository assetRepository, final ProfileContactRepository profileContactRepository, final ProfileRepository profileRepository) {
         this.deliveryJobRepository = deliveryJobRepository;
@@ -101,7 +101,7 @@ public class DeliveryJobService {
 
     @Transactional(readOnly = true)
     public Page<DeliveryJob> listJobs(final Pageable pageable, final Specification<DeliveryJob> spec) {
-        return this.deliveryJobRepository.findAll(spec, pageable);
+        return deliveryJobRepository.findAll(spec, pageable);
     }
 
     @Transactional(readOnly = true)

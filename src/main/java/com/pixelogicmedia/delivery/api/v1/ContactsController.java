@@ -3,6 +3,7 @@ package com.pixelogicmedia.delivery.api.v1;
 import com.pixelogicmedia.delivery.api.BaseController;
 import com.pixelogicmedia.delivery.api.mappers.ContactMapper;
 import com.pixelogicmedia.delivery.api.v1.models.ContactResource;
+import com.pixelogicmedia.delivery.api.v1.models.CreateContactResource;
 import com.pixelogicmedia.delivery.services.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,15 +34,15 @@ public class ContactsController extends BaseController implements ContactsApi {
     }
 
     @Override
-    public ResponseEntity<ContactResource> createContact(final ContactResource contactResource) {
+    public ResponseEntity<ContactResource> createContact(final CreateContactResource contactResource) {
         final var contact = this.contactService.createContact(this.contactMapper.map(contactResource));
 
         return ResponseEntity.ok(this.contactMapper.map(contact));
     }
 
     @Override
-    public ResponseEntity<ContactResource> updateContact(final Long id, final ContactResource contactResource) {
-        final var contact = this.contactService.updateContact(this.contactMapper.map(contactResource.id(id)));
+    public ResponseEntity<ContactResource> updateContact(final Long id, final CreateContactResource contactResource) {
+        final var contact = this.contactService.updateContact(id, this.contactMapper.map(contactResource));
 
         return ResponseEntity.ok(this.contactMapper.map(contact));
     }

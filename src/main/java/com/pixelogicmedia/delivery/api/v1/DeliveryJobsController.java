@@ -2,6 +2,7 @@ package com.pixelogicmedia.delivery.api.v1;
 
 import com.pixelogicmedia.delivery.api.BaseController;
 import com.pixelogicmedia.delivery.api.mappers.DeliveryJobMapper;
+import com.pixelogicmedia.delivery.api.v1.models.CreateDeliveryJobResource;
 import com.pixelogicmedia.delivery.api.v1.models.DeliveryJobResource;
 import com.pixelogicmedia.delivery.services.DeliveryJobService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class DeliveryJobsController extends BaseController implements DeliveryJo
     }
 
     @Override
-    public ResponseEntity<DeliveryJobResource> createJob(final Boolean allowDuplication, final DeliveryJobResource deliveryJobResource) {
+    public ResponseEntity<DeliveryJobResource> createJob(final Boolean allowDuplication, final CreateDeliveryJobResource deliveryJobResource) {
         final var job = this.deliveryJobService.createJob(this.deliveryJobMapper.map(deliveryJobResource), allowDuplication);
         return ResponseEntity.ok(this.deliveryJobMapper.map(job));
     }

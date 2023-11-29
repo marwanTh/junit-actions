@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pixelogicmedia.delivery.data.entities.DeliveryJob;
 import com.pixelogicmedia.delivery.data.om.OmQueueMessage;
 import io.awspring.cloud.sqs.operations.SqsTemplate;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.messaging.support.MessageBuilder;
@@ -25,16 +24,16 @@ public class OmDeliveryJobReporter extends AbstractDeliveryJobReporter {
     @Override
     public void reportProgress(DeliveryJob job) {
         double progressPercentage = job.getProgress() * 100;
-        report(new OmQueueMessage(job.getExternalId(), 200, null, (int) progressPercentage));
+        report(new OmQueueMessage(job.getReportingId(), 200, null, (int) progressPercentage));
     }
     @Override
     public void reportCompletion(DeliveryJob job) {
-        report(new OmQueueMessage(job.getExternalId(), 0, null, 100));
+        report(new OmQueueMessage(job.getReportingId(), 0, null, 100));
 
     }
     @Override
     public void reportFailure(DeliveryJob job) {
-        report(new OmQueueMessage(job.getExternalId(), -1, null, null));
+        report(new OmQueueMessage(job.getReportingId(), -1, null, null));
     }
 
     private void report(OmQueueMessage omQueueMessage) {

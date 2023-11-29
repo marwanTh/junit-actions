@@ -10,23 +10,25 @@ import jakarta.annotation.PostConstruct;
 import org.keycloak.admin.client.token.TokenManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.devtools.restart.RestartScope;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
 import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestConfiguration(proxyBeanMethods = false)
+@Testcontainers
 public abstract class AbstractControllerTest {
 
     @Value(value = "${local.server.port}")
@@ -36,14 +38,17 @@ public abstract class AbstractControllerTest {
     @Autowired
     private TokenManager tokenManager;
 
-    @Bean
-    @ServiceConnection
-    @RestartScope
-    public PostgreSQLContainer<?> postgreSQLContainer() {
-        return new PostgreSQLContainer<>("postgres:15")
-                .withDatabaseName("delivery_manager")
-                .withUsername("delivery_manager")
-                .withPassword("sherlock");
+    @Container
+    static PostgreSQLContainer<?> postgresqlContainer = new PostgreSQLContainer<>("postgres:15")
+            .withDatabaseName("delivery_manager")
+            .withUsername("delivery_manager")
+            .withPassword("sherlock");
+
+    @DynamicPropertySource
+    static void setProperties(final DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgresqlContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", postgresqlContainer::getUsername);
+        registry.add("spring.datasource.password", postgresqlContainer::getPassword);
     }
 
     @PostConstruct
@@ -91,7 +96,7 @@ public abstract class AbstractControllerTest {
 
     protected Map<String, Object> createConnection(final String name, final String type, final ConnectionConfig config) {
         final var connection = new ConnectionResource()
-                .type(type)
+                .type(ConnectionResource.TypeEnum.ASPERA)
                 .name(name);
 
         final var connectionMap = JsonMapper.convertValue(connection, new TypeReference<Map<String, Object>>() {

@@ -1,11 +1,9 @@
 package com.pixelogicmedia.delivery.data.entities;
 
 import com.pixelogicmedia.delivery.execution.AbstractDeliveryJobReporter;
-import com.pixelogicmedia.delivery.execution.AbstractTransferJobExecutor;
 import com.pixelogicmedia.delivery.execution.OmDeliveryJobReporter;
 import com.pixelogicmedia.delivery.execution.TransferInfo;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.DefaultValue;
 import org.hibernate.annotations.Cascade;
@@ -13,6 +11,7 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +28,7 @@ public class DeliveryJob extends AuditedEntity {
     @Cascade(CascadeType.ALL)
     private List<Asset> assets = new ArrayList<>();
 
-    @NotBlank
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -39,7 +38,7 @@ public class DeliveryJob extends AuditedEntity {
     @DefaultValue("0")
     private Double lastReportedProgress;
 
-    private String externalId;
+    private String reportingId;
 
     @Enumerated(EnumType.STRING)
     private JobInitiator initiator;
@@ -52,6 +51,15 @@ public class DeliveryJob extends AuditedEntity {
     private Set<DeliveryJobContact> contacts;
 
     private String emailSubject;
+    private String taskOffice;
+    private String omJobOffice;
+    private String owner;
+    private String externalSystemId;
+    private LocalDateTime startedAt;
+    private LocalDateTime completedAt;
+
+    @DefaultValue("true")
+    private boolean autoNotify = true;
 
     public Profile getProfile() {
         return this.profile;
@@ -101,12 +109,12 @@ public class DeliveryJob extends AuditedEntity {
         this.lastReportedProgress = lastReportedProgress;
     }
 
-    public String getExternalId() {
-        return externalId;
+    public String getReportingId() {
+        return reportingId;
     }
 
-    public void setExternalId(String externalId) {
-        this.externalId = externalId;
+    public void setReportingId(String externalId) {
+        this.reportingId = externalId;
     }
 
     public JobInitiator getInitiator() {
@@ -133,7 +141,60 @@ public class DeliveryJob extends AuditedEntity {
         this.contacts = deliveryJobContacts;
     }
 
+    public String getTaskOffice() {
+        return taskOffice;
+    }
 
+    public void setTaskOffice(String taskOffice) {
+        this.taskOffice = taskOffice;
+    }
+
+    public String getOmJobOffice() {
+        return omJobOffice;
+    }
+
+    public void setOmJobOffice(String omJobOffice) {
+        this.omJobOffice = omJobOffice;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getExternalSystemId() {
+        return externalSystemId;
+    }
+
+    public void setExternalSystemId(String externalSystemId) {
+        this.externalSystemId = externalSystemId;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(LocalDateTime completedAt) {
+        this.completedAt = completedAt;
+    }
+    public boolean isAutoNotify() {
+        return autoNotify;
+    }
+
+    public void setAutoNotify(boolean autoNotify) {
+        this.autoNotify = autoNotify;
+    }
 
     public enum Status {
         CREATED,

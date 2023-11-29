@@ -39,7 +39,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeliveryJob'
+              $ref: '#/components/schemas/CreateDeliveryJob'
       parameters:
         - in: query
           name: allowDuplication
@@ -104,7 +104,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Connection'
+              $ref: '#/components/schemas/CreateConnection'
       responses:
         200:
           description: OK
@@ -130,7 +130,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Connection'
+              $ref: '#/components/schemas/CreateConnection'
       responses:
         200:
           description: OK
@@ -168,7 +168,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Profile'
+              $ref: '#/components/schemas/CreateProfile'
       responses:
         200:
           description: OK
@@ -194,7 +194,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Profile'
+              $ref: '#/components/schemas/CreateProfile'
       responses:
         200:
           description: OK
@@ -233,7 +233,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Contact'
+              $ref: '#/components/schemas/CreateContact'
       responses:
         200:
           description: OK
@@ -259,7 +259,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Contact'
+              $ref: '#/components/schemas/CreateContact'
       responses:
         200:
           description: OK
@@ -298,7 +298,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Storage'
+              $ref: '#/components/schemas/CreateStorage'
       responses:
         200:
           description: OK
@@ -324,7 +324,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Storage'
+              $ref: '#/components/schemas/CreateStorage'
       responses:
         200:
           description: OK
@@ -333,8 +333,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/Storage'
 
-components:
+  /email-notifications:
+    post:
+      tags:
+        - Email notifications
+      description: Create a new email notification
+      operationId: createEmailNotification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailNotification'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailNotification'
 
+components:
   parameters:
     offsetParam:
       in: query
@@ -401,6 +419,7 @@ components:
           type: string
           description: Property path
 
+#   Asset
     Asset:
       type: object
       description: Transfer Asset
@@ -422,6 +441,7 @@ components:
           format: int64
           description: The pHelix Version ID of the asset.
 
+#   Delivery job
     DeliveryJob:
       type: object
       description: Transfer Job
@@ -459,7 +479,7 @@ components:
           type: string
           enum:
             - OM
-        externalId:
+        reportingId:
           type: string
         emailSubject:
           type: string
@@ -467,10 +487,67 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DeliveryJobContact'
+        name:
+          type: string
+        externalSystemId:
+          type: string
+        taskOffice:
+          type: string
+        omJobOffice:
+          type: string
+        owner:
+          type: string
+        createdAt:
+          type: string
+        startedAt:
+          type: string
+        completedAt:
+          type: string
+        autoNotify:
+          type: boolean
+          default: true
       required:
         - assets
         - profile
 
+    CreateDeliveryJob:
+      type: object
+      description: Transfer Job
+      properties:
+        profile:
+          $ref: '#/components/schemas/BasicEntity'
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
+        initiator:
+          type: string
+          enum:
+            - OM
+        reportingId:
+          type: string
+        emailSubject:
+          type: string
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateDeliveryJobContact'
+        name:
+          type: string
+        externalSystemId:
+          type: string
+        taskOffice:
+          type: string
+        omJobOffice:
+          type: string
+        autoNotify:
+          type: boolean
+          default: true
+      required:
+        - assets
+        - profile
+
+#   Connection
     Connection:
       type: object
       description: Connection
@@ -489,6 +566,8 @@ components:
         type:
           type: string
           description: Connection type (e.g. Aspera...)
+          enum:
+            - ASPERA
         config:
           type: object
           description: Connection configurations in JSON format
@@ -497,6 +576,28 @@ components:
         - type
         - config
 
+    CreateConnection:
+      type: object
+      description: CreateConnection
+      properties:
+        name:
+          type: string
+          description: Connection name
+        description:
+          type: string
+          description: Connection description
+        type:
+          type: string
+          description: Connection type (e.g. Aspera...)
+        config:
+          type: object
+          description: Connection configurations in JSON format
+      required:
+        - name
+        - type
+        - config
+
+#   Contact
     Contact:
       type: object
       description: Contact
@@ -519,6 +620,24 @@ components:
       required:
         - email
 
+    CreateContact:
+      type: object
+      description: CreateContact
+      properties:
+        firstName:
+          type: string
+          description: Contact first name
+        lastName:
+          type: string
+          description: Contact last name
+        email:
+          type: string
+          format: email
+          description: Contact first name
+      required:
+        - email
+
+#   Profile
     ProfileContact:
       type: object
       description: ProfileContact
@@ -544,6 +663,30 @@ components:
         - notifyOn
         - sendType
 
+    CreateProfileContact:
+      type: object
+      description: CreateProfileContact
+      properties:
+        contact:
+          $ref: '#/components/schemas/BasicEntity'
+        notifyOn:
+          type: string
+          enum:
+            - SUCCESS
+            - FAILURE
+          description: notify on (SUCCESS or FAILURE)
+        sendType:
+          type: string
+          enum:
+            - TO
+            - CC
+            - BCC
+          description: TO,CC or BCC
+      required:
+        - notifyOn
+        - sendType
+
+#   Delivery job contact
     DeliveryJobContact:
       type: object
       description: DeliveryJobContact
@@ -569,6 +712,31 @@ components:
         - notifyOn
         - sendType
 
+    CreateDeliveryJobContact:
+      type: object
+      description: CreateDeliveryJobContact
+      properties:
+        contact:
+          $ref: '#/components/schemas/BasicEntity'
+        notifyOn:
+          type: string
+          enum:
+            - SUCCESS
+            - FAILURE
+          description: notify on (SUCCESS or FAILURE)
+        sendType:
+          type: string
+          enum:
+            - TO
+            - CC
+            - BCC
+          description: TO,CC or BCC
+      required:
+        - contact
+        - notifyOn
+        - sendType
+
+#   Profile
     Profile:
       type: object
       description: Connection Profile
@@ -605,6 +773,38 @@ components:
         - name
         - connection
 
+    CreateProfile:
+      type: object
+      description: CreateProfile
+      properties:
+        name:
+          type: string
+          description: Connection name
+        description:
+          type: string
+          description: Connection description
+        connection:
+          $ref: '#/components/schemas/BasicEntity'
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateProfileContact'
+        rootPath:
+          type: string
+          description: Root path in the destination
+          default: "/"
+        emailSubjectTemplate:
+          type: string
+          description: template that will be resolved upon job creation
+        completionTemplateKey:
+          type: string
+        failureTemplateKey:
+          type: string
+      required:
+        - name
+        - connection
+
+#   Storage
     Storage:
       type: object
       description: Storage Mapping
@@ -628,6 +828,61 @@ components:
       required:
         - storageId
 
+    CreateStorage:
+      type: object
+      description: Create Storage
+      properties:
+        name:
+          type: string
+          description: Storage name
+        storageId:
+          type: string
+          description: Storage AM ID
+        location:
+          type: string
+          description: Storage location
+        attributes:
+          $ref: '#/components/schemas/StorageAttributes'
+      required:
+        - storageId
+        - attributes
+
     StorageAttributes:
       type: object
       additionalProperties: true
+
+#   Email
+    EmailNotification:
+      type: object
+      description: email notification mapping
+      properties:
+        type:
+          type: string
+          enum:
+            - Completion
+            - Failure
+        initiator:
+          type: string
+          enum:
+            - OM
+        externalId:
+          type: string
+        deliveryJob:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+      required:
+        - deliveryJob
+        - type
+
+#   Common
+    BasicEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+      required:
+        - id

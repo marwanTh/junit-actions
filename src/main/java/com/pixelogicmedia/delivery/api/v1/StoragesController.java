@@ -2,6 +2,7 @@ package com.pixelogicmedia.delivery.api.v1;
 
 import com.pixelogicmedia.delivery.api.BaseController;
 import com.pixelogicmedia.delivery.api.mappers.StorageMapper;
+import com.pixelogicmedia.delivery.api.v1.models.CreateStorageResource;
 import com.pixelogicmedia.delivery.api.v1.models.StorageResource;
 import com.pixelogicmedia.delivery.services.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class StoragesController extends BaseController implements StoragesApi {
     }
 
     @Override
-    public ResponseEntity<StorageResource> createStorage(final StorageResource storageResource) {
+    public ResponseEntity<StorageResource> createStorage(final CreateStorageResource storageResource) {
         final var storage = this.storageService.createStorage(this.storageMapper.map(storageResource));
 
         return ResponseEntity.ok(this.storageMapper.map(storage));
@@ -40,8 +41,8 @@ public class StoragesController extends BaseController implements StoragesApi {
     }
 
     @Override
-    public ResponseEntity<StorageResource> updateStorage(final Long id, final StorageResource storageResource) {
-        final var storage = this.storageService.updateStorage(this.storageMapper.map(storageResource.id(id)));
+    public ResponseEntity<StorageResource> updateStorage(final Long id, final CreateStorageResource storageResource) {
+        final var storage = this.storageService.updateStorage(id, this.storageMapper.map(storageResource));
 
         return ResponseEntity.ok(this.storageMapper.map(storage));
     }

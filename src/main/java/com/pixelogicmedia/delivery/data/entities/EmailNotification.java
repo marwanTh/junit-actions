@@ -1,5 +1,7 @@
 package com.pixelogicmedia.delivery.data.entities;
 
+import com.pixelogicmedia.delivery.execution.AbstractEmailNotificationReporter;
+import com.pixelogicmedia.delivery.execution.OmEmailNotificationReporter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -19,9 +21,14 @@ public class EmailNotification extends AuditedEntity {
     @JoinColumn
     private DeliveryJob deliveryJob;
 
+    private String externalId;
+
+    @Enumerated(EnumType.STRING)
+    private EmailNotificationInitiator initiator;
+
     public enum Type {
-        Completion,
-        Failure
+        COMPLETION,
+        FAILURE
     }
 
     public enum Status {
@@ -64,5 +71,35 @@ public class EmailNotification extends AuditedEntity {
 
     public void setDeliveryJob(DeliveryJob deliveryJob) {
         this.deliveryJob = deliveryJob;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
+
+    public EmailNotificationInitiator getInitiator() {
+        return initiator;
+    }
+
+    public void setInitiator(EmailNotificationInitiator initiator) {
+        this.initiator = initiator;
+    }
+
+    public enum EmailNotificationInitiator {
+        OM(OmEmailNotificationReporter.class);
+
+        private final Class<? extends AbstractEmailNotificationReporter> reporter;
+
+        private EmailNotificationInitiator(Class<? extends AbstractEmailNotificationReporter> reporter) {
+            this.reporter = reporter;
+        }
+
+        public Class<? extends AbstractEmailNotificationReporter> getReporter() {
+            return reporter;
+        }
     }
 }

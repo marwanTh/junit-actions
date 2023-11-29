@@ -13,8 +13,9 @@ public class AssetManagerClientTests {
 
 
     @Test
+
     void canGetAssetGeneralDataByOmAssetVersion() {
-        final var data = this.assetManagerClient.getAssetGeneralDataByOmAssetVersion(903237L);
+        final var data = this.assetManagerClient.getAssetGeneralDataByOmAssetVersion(995687L);
 
         Assertions.assertEquals("image", data.getMediaType());
     }

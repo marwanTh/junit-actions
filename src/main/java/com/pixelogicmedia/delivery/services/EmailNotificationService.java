@@ -1,16 +1,18 @@
 package com.pixelogicmedia.delivery.services;
 
 import com.pixelogicmedia.delivery.Factories.ExecutorFactory;
+import com.pixelogicmedia.delivery.Factories.ReporterFactory;
+import com.pixelogicmedia.delivery.api.mappers.EmailNotificationMapper;
+import com.pixelogicmedia.delivery.api.v1.models.EmailNotificationResource;
 import com.pixelogicmedia.delivery.data.dto.mh.MessageRequestData;
-import com.pixelogicmedia.delivery.data.entities.Connection;
 import com.pixelogicmedia.delivery.data.entities.Contact;
 import com.pixelogicmedia.delivery.data.entities.EmailNotification;
 import com.pixelogicmedia.delivery.data.repositories.DeliveryJobContactRepository;
 import com.pixelogicmedia.delivery.data.repositories.EmailNotificationRepository;
 import com.pixelogicmedia.delivery.execution.AbstractTransferJobExecutor;
-import com.pixelogicmedia.delivery.execution.aspera.AsperaNodeTransferInfo;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
@@ -29,12 +31,18 @@ public class EmailNotificationService {
 
     private final ExecutorFactory executorFactory;
 
-    public EmailNotificationService(final MessageHandlerClient messageHandlerClient, final TransactionTemplate transactionTemplate, EmailNotificationRepository emailNotificationRepository, DeliveryJobContactRepository deliveryJobContactRepository, final ExecutorFactory executorFactory) {
+    private final EmailNotificationMapper emailNotificationMapper;
+
+    private final ReporterFactory reporterFactory;
+
+    public EmailNotificationService(final MessageHandlerClient messageHandlerClient, final TransactionTemplate transactionTemplate, EmailNotificationRepository emailNotificationRepository, DeliveryJobContactRepository deliveryJobContactRepository, final ExecutorFactory executorFactory, final EmailNotificationMapper emailNotificationMapper, ReporterFactory reporterFactory) {
         this.messageHandlerClient = messageHandlerClient;
         this.transactionTemplate = transactionTemplate;
         this.emailNotificationRepository = emailNotificationRepository;
         this.deliveryJobContactRepository = deliveryJobContactRepository;
         this.executorFactory = executorFactory;
+        this.emailNotificationMapper = emailNotificationMapper;
+        this.reporterFactory = reporterFactory;
     }
 
     @Scheduled(fixedRate = 500, timeUnit = TimeUnit.MILLISECONDS)
@@ -66,8 +74,13 @@ public class EmailNotificationService {
 
 
     private void updateEmailStatus(EmailNotification emailNotification) {
+        final var reporter = reporterFactory.getEmailReporter(emailNotification);
+
         if (emailNotification.getMessageHandlerRequestId() == null) {
             emailNotification.setStatus(EmailNotification.Status.FAILED);
+            if (reporter != null) {
+                reporter.reportFailure(emailNotification);
+            }
             return;
         }
         var status = messageHandlerClient.getEmailStatus(emailNotification.getMessageHandlerRequestId());
@@ -79,6 +92,13 @@ public class EmailNotificationService {
             case("dropped") -> emailNotification.setStatus(EmailNotification.Status.DROPPED);
             case("deferred") -> emailNotification.setStatus(EmailNotification.Status.DEFERRED);
             case("failed") -> emailNotification.setStatus(EmailNotification.Status.FAILED);
+        }
+        if (emailNotification.getStatus().equals(EmailNotification.Status.PENDING) || reporter == null) {
+            // do nothing
+        } else if (emailNotification.getStatus().equals(EmailNotification.Status.DELIVERED)) {
+            reporter.reportCompletion(emailNotification);
+        } else {
+            reporter.reportFailure(emailNotification);
         }
     }
 
@@ -97,7 +117,7 @@ public class EmailNotificationService {
 
     private void sendTransferEmail(EmailNotification emailNotification, AbstractTransferJobExecutor executor) {
         final var job = emailNotification.getDeliveryJob();
-        if (Objects.equals(emailNotification.getType(), EmailNotification.Type.Completion)) {
+        if (Objects.equals(emailNotification.getType(), EmailNotification.Type.COMPLETION)) {
 
             Map<String, Object> emailBodyData = executor.getEmailContext(job);
             List<MessageRequestData.Recipient> recipients = new ArrayList<>();
@@ -113,13 +133,20 @@ public class EmailNotificationService {
                 recipients.add(new MessageRequestData.Recipient("Pa","individual", contact.getContact().getEmail(), recipientType));
             }
 
-            //todo store the template key in an environment variable
-            var requestId = messageHandlerClient.sendEmail(new MessageRequestData("delivery_test",
+            var requestId = messageHandlerClient.sendEmail(new MessageRequestData(job.getProfile().getCompletionTemplateKey(),
                     new MessageRequestData.Payload(recipients, job.getEmailSubject(), emailBodyData)));
 
             emailNotification.setMessageHandlerRequestId(requestId);
             emailNotification.setStatus(EmailNotification.Status.SENDING);
         }
+    }
+
+    @Transactional
+    public EmailNotificationResource createNotification(EmailNotificationResource emailNotificationResource) {
+        // todo validations
+        EmailNotification emailNotification = emailNotificationMapper.map(emailNotificationResource);
+        final var createdEmailNotification = emailNotificationRepository.save(emailNotification);
+        return emailNotificationMapper.map(createdEmailNotification);
     }
 
 }

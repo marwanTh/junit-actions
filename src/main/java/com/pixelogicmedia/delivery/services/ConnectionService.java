@@ -32,7 +32,8 @@ public class ConnectionService {
     }
 
     @Transactional
-    public Connection updateConnection(final Connection connection) {
+    public Connection updateConnection(final Long id, final Connection connection) {
+        connection.setId(id);
         if (Objects.isNull(connection.getId())) {
             throw BusinessException.badRequest("ID is required when updating objects");
         }

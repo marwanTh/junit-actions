@@ -48,9 +48,9 @@ public class DeliveryJobReportingService {
     }
 
     public void reportCompletion(DeliveryJob job) {
-        if (!job.getDeliveryJobContacts().stream().filter(contact -> Objects.equals(contact.getNotifyOn(), Contact.NotifyOn.SUCCESS)).toList().isEmpty()) {
+        if (job.isAutoNotify() && !job.getDeliveryJobContacts().stream().filter(contact -> Objects.equals(contact.getNotifyOn(), Contact.NotifyOn.SUCCESS)).toList().isEmpty()) {
             final var emailNotification = new EmailNotification();
-            emailNotification.setType(EmailNotification.Type.Completion);
+            emailNotification.setType(EmailNotification.Type.COMPLETION);
             emailNotification.setStatus(EmailNotification.Status.PENDING);
             emailNotification.setDeliveryJob(job);
             emailNotificationRepository.save(emailNotification);
@@ -63,9 +63,9 @@ public class DeliveryJobReportingService {
     }
 
     public void reportFailure(DeliveryJob job) {
-        if (!job.getDeliveryJobContacts().stream().filter(contact -> Objects.equals(contact.getNotifyOn(), Contact.NotifyOn.FAILURE)).toList().isEmpty()) {
+        if (job.isAutoNotify() && !job.getDeliveryJobContacts().stream().filter(contact -> Objects.equals(contact.getNotifyOn(), Contact.NotifyOn.FAILURE)).toList().isEmpty()) {
             final var emailNotification = new EmailNotification();
-            emailNotification.setType(EmailNotification.Type.Failure);
+            emailNotification.setType(EmailNotification.Type.FAILURE);
             emailNotification.setStatus(EmailNotification.Status.PENDING);
             emailNotification.setDeliveryJob(job);
             emailNotificationRepository.save(emailNotification);

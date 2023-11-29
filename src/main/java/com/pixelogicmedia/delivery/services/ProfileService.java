@@ -31,6 +31,12 @@ public class ProfileService {
 
     @Transactional
     public Profile createProfile(final Profile profile) {
+        if (profile.getCompletionTemplateKey() == null) {
+            profile.setCompletionTemplateKey(defaultCompletionTemplateKey);
+        }
+        if (profile.getFailureTemplateKey() == null) {
+            profile.setFailureTemplateKey(defaultFailureTemplateKey);
+        }
         return this.profileRepository.save(profile);
     }
 
@@ -40,7 +46,8 @@ public class ProfileService {
     }
 
     @Transactional
-    public Profile updateProfile(final Profile profile) {
+    public Profile updateProfile(final Long id, final Profile profile) {
+        profile.setId(id);
         if (Objects.isNull(profile.getId())) {
             throw BusinessException.badRequest("ID is required when updating objects");
         }

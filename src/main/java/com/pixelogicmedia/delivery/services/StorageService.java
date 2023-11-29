@@ -33,7 +33,8 @@ public class StorageService {
     }
 
     @Transactional
-    public Storage updateStorage(final Storage storage) {
+    public Storage updateStorage(final Long id, final Storage storage) {
+        storage.setId(id);
         if (Objects.isNull(storage.getId())) {
             throw BusinessException.badRequest("ID is required when updating objects");
         }

@@ -57,9 +57,10 @@ public class ProfileControllerTests extends AbstractControllerTest {
                 new AsperaConnectionConfig());
 
         final var connection = this.post("connections", connectionRequest, ConnectionResource.class);
-        profileResource.connection(new ConnectionResource().id(connection.getId()));
+        profileResource.connection(connection.config(connectionRequest.get("config")));
         profileResource.name("ASPERA_test_Profile");
         profileResource = addRandomContactsToProfile(profileResource);
+
         final var profileResponse = this.post("profiles", profileResource,
                 ProfileResource.class);
 

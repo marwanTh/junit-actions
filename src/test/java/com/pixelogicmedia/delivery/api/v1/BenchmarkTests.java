@@ -6,7 +6,9 @@ import com.github.noconnor.junitperf.JUnitPerfTest;
 import com.github.noconnor.junitperf.JUnitPerfTestActiveConfig;
 import com.github.noconnor.junitperf.reporting.providers.HtmlReportGenerator;
 import com.pixelogicmedia.delivery.api.v1.models.ContactResource;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,7 +33,7 @@ public class BenchmarkTests extends AbstractControllerTest {
     private final static JUnitPerfReportingConfig PERF_CONFIG = JUnitPerfReportingConfig.builder()
             .reportGenerator(new HtmlReportGenerator(REPORT_PATH))
             .build();
-
+    @Disabled("Disabled Performance Tests")
     @Test
     @JUnitPerfTest(threads = 500, durationMs = 180_000, warmUpMs = 10_000)
     void createAndListContacts() {

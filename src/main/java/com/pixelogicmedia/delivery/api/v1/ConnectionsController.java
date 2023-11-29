@@ -3,6 +3,7 @@ package com.pixelogicmedia.delivery.api.v1;
 import com.pixelogicmedia.delivery.api.BaseController;
 import com.pixelogicmedia.delivery.api.mappers.ConnectionMapper;
 import com.pixelogicmedia.delivery.api.v1.models.ConnectionResource;
+import com.pixelogicmedia.delivery.api.v1.models.CreateConnectionResource;
 import com.pixelogicmedia.delivery.services.ConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +34,14 @@ public class ConnectionsController extends BaseController implements Connections
     }
 
     @Override
-    public ResponseEntity<ConnectionResource> createConnection(final ConnectionResource connectionResource) {
+    public ResponseEntity<ConnectionResource> createConnection(final CreateConnectionResource connectionResource) {
         final var connection = this.connectionService.createConnection(this.connectionMapper.map(connectionResource));
         return ResponseEntity.ok(this.connectionMapper.map(connection));
     }
 
     @Override
-    public ResponseEntity<ConnectionResource> updateConnection(final Long id, final ConnectionResource connectionResource) {
-        final var connection = this.connectionService.updateConnection(this.connectionMapper.map(connectionResource.id(id)));
+    public ResponseEntity<ConnectionResource> updateConnection(final Long id, final CreateConnectionResource connectionResource) {
+        final var connection = this.connectionService.updateConnection(id, this.connectionMapper.map(connectionResource));
         return ResponseEntity.ok(this.connectionMapper.map(connection));
     }
 }
